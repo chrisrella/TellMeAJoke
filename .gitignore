@@ -1,0 +1,39 @@
+# secrets / credentials
+config.json
+client_secrets.json
+
+# proprietary video content
+output/
+content/master/
+content/rejected/
+scratch/
+caption-automation/extra-clips/
+
+# third-party sound effects (not ours to redistribute)
+caption-automation/sounds/
+
+# joke text/metadata (content, not code)
+content/transcripts.csv
+content/ratings.csv
+content/themes.csv
+
+# fonts (licensing unclear)
+caption-automation/fonts/
+
+# third-party tool (cloned from PeterL1n/RobustVideoMatting, not ours)
+caption-automation/rvm/
+
+# business docs / local-only config example
+config.json.example
+privacy-policy
+privacy-policy-text
+privacy-policy.pdf
+terms-of-service.pdf
+
+# junk
+.DS_Store
+**/.DS_Store
+__pycache__/
+**/__pycache__/
+caption-automation/test-results/
+caption-automation/reference-screenshots/

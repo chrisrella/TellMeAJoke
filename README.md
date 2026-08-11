@@ -3,6 +3,8 @@
 
 An end-to-end pipeline that turns raw stand-up clips into published social videos: dedup and cleanup, transcription, AI-assisted captioning and tagging, TikTok-format rendering, and scheduled multi-platform posting.
 
+cr - built to modernize and monetize an early 2000s street interview library. Started by building a CLI tool to help comb through and judge videos quickly. Then, by reformatting, captioning, and compiling videos together, they became ready-to-post for today's social media platforms. Lastly, I built a system using cron to automatically post 5 videos per weekday.
+
 ## Pipeline Overview
 
 1. **Content prep** (`content-prep/`) — dedupes footage across formats, flags silent/unusable clips via ffprobe, and converts legacy formats (`.wmv`/`.flv`) to `.mp4`. Produces `content/master/`, the canonical clip library.

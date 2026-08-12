@@ -7,6 +7,23 @@ cr - built to modernize and monetize an early 2000s street interview library. St
 
 ## Pipeline Overview
 
+```mermaid
+flowchart TD
+    A[Raw footage] --> B["① Content Prep<br/>dedup · silence check · format convert"]
+    B --> C[("content/master/<br/>clip library")]
+    C --> D["② Transcribe & Categorize<br/>faster-whisper · GPT-4o tagging"]
+    D --> E{"Rated & tagged clips"}
+    E --> F["③④ Single/Bulk Processing<br/>blur → sticker → ZapCap captions → GPT-4o copy"]
+    E --> G["⑤ Compilation Builder<br/>rank Top N · overlays · SFX · watermark"]
+    F --> H[("ready_to_post/")]
+    G --> I[("test-compilations/")]
+    H --> J["⑥ Poster<br/>(cron-scheduled)"]
+    J --> K[Instagram]
+    J --> L[Facebook]
+    J --> M[YouTube]
+    J --> N["TikTok<br/>(pending app review)"]
+```
+
 1. **Content prep** (`content-prep/`) — dedupes footage across formats, flags silent/unusable clips via ffprobe, and converts legacy formats (`.wmv`/`.flv`) to `.mp4`. Produces `content/master/`, the canonical clip library.
 2. **Transcription & categorization** (`caption-automation/transcribe.py`, `categorize.py`) — bulk-transcribes rated keepers with [faster-whisper](https://github.com/SYSTRAN/faster-whisper) (GPU-accelerated), then tags each clip with theme categories for filtering later.
 3. **Single-clip processing** (`caption-automation/post_pipeline.py`) — turns one rated clip into a ready-to-post Reel: reformats to 9:16 with a blurred background, overlays a GPT-4o-selected prop sticker, burns in captions via [ZapCap](https://zapcap.ai/), and generates an Instagram caption + hashtags with GPT-4o.

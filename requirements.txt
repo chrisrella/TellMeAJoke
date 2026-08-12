@@ -1,0 +1,9 @@
+pillow>=11.3.0
+numpy>=2.3.2
+requests>=2.34.2
+openai>=2.44.0
+torch>=2.13.0
+faster-whisper>=1.2.1
+google-auth>=2.56.0
+google-auth-oauthlib>=1.4.0
+google-api-python-client>=2.198.0

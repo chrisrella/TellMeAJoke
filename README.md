@@ -16,6 +16,14 @@ cr - built to modernize and monetize an early 2000s street interview library. St
 
 See [`POSTING.md`](./POSTING.md) for the day-to-day operating workflow and cron setup.
 
+## Tech Stack
+
+- **Video/audio processing** — ffmpeg, Pillow, PyTorch (background matting)
+- **Transcription** — [faster-whisper](https://github.com/SYSTRAN/faster-whisper), Metal-GPU accelerated
+- **AI captioning & tagging** — OpenAI GPT-4o (prop selection, Instagram captions/hashtags), [ZapCap](https://zapcap.ai/) (burned-in captions)
+- **Platform APIs** — Meta Graph API (Instagram + Facebook), YouTube Data API, TikTok API, each with their own OAuth flow
+- **Scheduling** — cron, driven by a generated per-day posting schedule
+
 ---
 
 ## Compilation Builder (`compile.py`)
@@ -37,7 +45,7 @@ Each compilation features:
 You'll need Python 3.11+ and ffmpeg installed.
 
 ```
-pip install pillow faster-whisper
+pip install -r requirements.txt
 brew install ffmpeg
 ```
 

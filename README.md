@@ -198,3 +198,11 @@ Drop any `.mp3` file into `caption-automation/sounds/`. The script automatically
 **"Only X usable videos in category"** — That category doesn't have enough short clips (under 25 seconds). Try a bigger category like Dad Jokes or pick fewer clips with `--count`.
 
 **ffmpeg not found** — Run `brew install ffmpeg` in the terminal.
+
+---
+
+## License & Ownership
+
+This repository is shared publicly to demonstrate the engineering behind the pipeline — no license is granted to use, copy, or redistribute the code or assets. All rights reserved.
+
+The TellMeAJoke video library, brand, and any footage referenced or shown here (including the demo GIF) are the proprietary property of TellMeAJoke. Source clips, transcripts, and unreleased content are intentionally excluded from this repo — see `.gitignore`.

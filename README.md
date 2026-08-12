@@ -5,6 +5,10 @@ An end-to-end pipeline that turns raw stand-up clips into published social video
 
 cr - built to modernize and monetize an early 2000s street interview library. Started by building a CLI tool to help comb through and judge videos quickly. Then, by reformatting, captioning, and compiling videos together, they became ready-to-post for today's social media platforms. Lastly, I built a system using cron to automatically post 5 videos per weekday.
 
+<p align="center"><img src="docs/demo.gif" alt="Pipeline output: a captioned, watermarked, 9:16 clip ready to post" width="300"></p>
+
+*Pipeline output — blurred 9:16 reformat, name tag, burned-in captions, and watermark, generated automatically from a raw source clip. (Already publicly posted to Instagram/Facebook/YouTube.)*
+
 ## Pipeline Overview
 
 ```mermaid

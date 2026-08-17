@@ -66,24 +66,31 @@ Always use the full Python path so cron finds the right packages:
 python3 caption-automation/poster.py --list
 ```
 
-**2. Keep Mac awake for the posting window:**
+**2. Generate today's cron lines:**
+```bash
+python3 caption-automation/gen_cron.py              # default: 12pm–4pm, 5 posts
+python3 caption-automation/gen_cron.py --from 10 --to 15
+python3 caption-automation/gen_cron.py --from 12 --count 3
+```
+
+**3. Keep Mac awake for the posting window:**
 ```bash
 caffeinate -t 21600 &   # 6 hours — kill it with: kill %1
 ```
 
-**3. Open crontab:**
+**4. Open crontab:**
 ```bash
 crontab -e
 ```
 
-**4. In the vim editor that opens:**
+**5. In the vim editor that opens:**
 - Type `:%d` + Enter to delete all existing lines
 - Press `i` to enter insert mode
 - Paste your new cron lines (see format below)
 - Press Escape
 - Type `:wq` + Enter to save and exit
 
-**5. Verify it saved:**
+**6. Verify it saved:**
 ```bash
 crontab -l
 ```

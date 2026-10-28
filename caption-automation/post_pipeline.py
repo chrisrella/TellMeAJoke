@@ -78,6 +78,8 @@ def main() -> None:
                         help="Skip the approved-rating check (useful for testing)")
     parser.add_argument("--no-sticker",  action="store_true",
                         help="Skip the emoji overlay step")
+    parser.add_argument("--trim",        action="store_true",
+                        help="Auto-trim silent intro before processing")
     parser.add_argument("--auto", action="store_true",
                         help="Skip caption review and render immediately")
     parser.add_argument("--post", action="store_true",
@@ -127,11 +129,22 @@ def main() -> None:
         blurred   = tmp / f"{stem}_blurred.mp4"
         overlaid  = tmp / f"{stem}_overlaid.mp4"
         captioned = OUTPUT / f"{stem}_final.mp4"
+        blur_src  = src
+
+        # ── A.5: trim intro ───────────────────────────────────────────────────
+        if args.trim:
+            trimmed = tmp / f"{stem}_trimmed.mp4"
+            ok = run("[A.5] Trim intro", [
+                "python3", str(SCRIPTS / "trim_intro.py"),
+                str(src), "--output", str(trimmed),
+            ])
+            if ok and trimmed.exists():
+                blur_src = trimmed
 
         # ── B: blur ──────────────────────────────────────────────────────────
         ok = run("[B] TikTok blur", [
             "python3", str(SCRIPTS / "blur_clip.py"),
-            clip_name,
+            str(blur_src),
             "--output", str(blurred),
         ])
         if not ok:

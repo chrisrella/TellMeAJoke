@@ -15,7 +15,10 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 SECRETS = Path.home() / "TellMeAJoke/client_secrets.json"
 CONFIG  = Path.home() / "TellMeAJoke/config.json"
 
-SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
+SCOPES = [
+    "https://www.googleapis.com/auth/youtube.upload",
+    "https://www.googleapis.com/auth/youtube.readonly",
+]
 
 
 def main() -> None:

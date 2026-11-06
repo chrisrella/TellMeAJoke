@@ -15,18 +15,54 @@ Usage:
 
 import argparse
 import csv
+import json
 import random
+import re
 import subprocess
 import sys
+import time
+from datetime import datetime
 from pathlib import Path
+
+from moderation import moderation_screen
 
 SCRIPTS        = Path(__file__).parent
 MASTER         = Path.home() / "TellMeAJoke/content/master"
 TRANSCRIPTS    = Path.home() / "TellMeAJoke/content/transcripts.csv"
 READY          = Path.home() / "TellMeAJoke/output/ready_to_post"
 ALREADY_POSTED = Path.home() / "TellMeAJoke/output/already_posted"
+CONFIG         = Path.home() / "TellMeAJoke/config.json"
+MOD_LOG        = Path.home() / "TellMeAJoke/output/moderation_blocked.log"
 
 APPROVED_RATINGS = {"good", "funny", "approved"}
+
+# Risky theme tags to skip entirely (already filtered at review time, but belt+suspenders)
+RISKY_TAGS = {"hate", "slur", "blocked"}
+
+
+
+def load_openai_key() -> str:
+    try:
+        with open(CONFIG) as f:
+            return json.load(f).get("openai_api_key", "")
+    except Exception:
+        return ""
+
+
+def get_transcript(clip_name: str) -> str | None:
+    if not TRANSCRIPTS.exists():
+        return None
+    with open(TRANSCRIPTS, newline="", encoding="utf-8") as f:
+        for row in csv.reader(f):
+            if row and Path(row[0]).name == clip_name:
+                return row[2].strip() if len(row) > 2 else None
+    return None
+
+
+def log_blocked(clip_name: str, reason: str) -> None:
+    MOD_LOG.parent.mkdir(parents=True, exist_ok=True)
+    with open(MOD_LOG, "a") as f:
+        f.write(f"{datetime.now().isoformat()} | BLOCKED | {clip_name} | {reason}\n")
 
 
 def approved_clips() -> list[tuple[str, str]]:
@@ -52,10 +88,14 @@ def already_processed(clip_name: str) -> bool:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Bulk pipeline (A→E) for all approved clips.")
-    parser.add_argument("--list",  action="store_true", help="Show pending clips and exit")
-    parser.add_argument("--auto",  action="store_true", help="Skip ZapCap review (--auto flag)")
-    parser.add_argument("--limit", type=int, default=None, metavar="N",
+    parser.add_argument("--list",     action="store_true", help="Show pending clips and exit")
+    parser.add_argument("--auto",     action="store_true", help="Skip ZapCap review (--auto flag)")
+    parser.add_argument("--limit",    type=int, default=None, metavar="N",
                         help="Stop after processing N clips")
+    parser.add_argument("--no-mod",   action="store_true",
+                        help="Skip GPT moderation pre-screen (faster, less safe)")
+    parser.add_argument("--trim",     action="store_true",
+                        help="Auto-trim silent intro from each clip")
     args = parser.parse_args()
 
     all_approved = approved_clips()
@@ -80,11 +120,29 @@ def main() -> None:
           + (f"  ({skipped} more will remain after --limit)" if skipped else "")
           + "\n")
 
-    failed = []
+    api_key = load_openai_key() if not args.no_mod else ""
+    if not args.no_mod:
+        print(f"  Moderation pre-screen: {'enabled' if api_key else 'skipped (no OpenAI key)'}\n")
+
+    failed  = []
+    blocked = []
     for i, (clip_name, rating) in enumerate(to_process, 1):
         print(f"\n{'='*60}")
         print(f"  [{i}/{len(to_process)}]  {clip_name}  (rating: {rating})")
         print(f"{'='*60}")
+
+        # Moderation pre-screen
+        if not args.no_mod and api_key:
+            transcript = get_transcript(clip_name)
+            is_blocked, reason = moderation_screen(clip_name, transcript, api_key)
+            time.sleep(0.3)
+            if is_blocked:
+                print(f"  ⛔ BLOCKED by moderation: {reason}")
+                log_blocked(clip_name, reason)
+                blocked.append(clip_name)
+                continue
+            else:
+                print(f"  ✓ Moderation clear")
 
         cmd = [
             sys.executable, str(SCRIPTS / "post_pipeline.py"),
@@ -93,14 +151,21 @@ def main() -> None:
         ]
         if args.auto:
             cmd.append("--auto")
+        if args.trim:
+            cmd.append("--trim")
 
         result = subprocess.run(cmd, text=True)
         if result.returncode != 0:
             print(f"\n  ✗ Failed: {clip_name}")
             failed.append(clip_name)
 
+    processed = len(to_process) - len(blocked)
     print(f"\n{'='*60}")
-    print(f"  Batch complete: {len(to_process) - len(failed)}/{len(to_process)} succeeded")
+    print(f"  Batch complete: {processed - len(failed)}/{processed} succeeded")
+    if blocked:
+        print(f"  Blocked by moderation ({len(blocked)}) — see {MOD_LOG}:")
+        for b in blocked:
+            print(f"    ⛔ {b}")
     if failed:
         print(f"  Failed ({len(failed)}):")
         for f in failed:

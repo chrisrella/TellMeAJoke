@@ -76,6 +76,15 @@ def find_caption(stem: str) -> str:
     return ""
 
 
+def find_yt_title(stem: str) -> str | None:
+    """Return GPT-generated title, or None if the sidecar file is missing."""
+    for directory in (CAPTIONS_DIR, ALREADY_POSTED):
+        candidate = directory / f"{stem}_yt_title.txt"
+        if candidate.exists():
+            return candidate.read_text().strip()
+    return None
+
+
 def upload_video(youtube, video_path: Path, title: str, description: str) -> str:
     """Upload video and return the YouTube video ID."""
     print(f"Uploading {video_path.name} ({video_path.stat().st_size / 1_000_000:.1f} MB)...")
@@ -126,8 +135,17 @@ def main() -> None:
     video       = find_video(stem)
     caption_txt = find_caption(stem)
 
-    title       = stem.replace("_", " ")
-    description = f"{caption_txt}\n\n#Shorts" if caption_txt else "#Shorts"
+    title = find_yt_title(stem)
+    if not title:
+        print(f"Error: no GPT title found for {stem!r}.")
+        print(f"  Expected: output/captions/{stem}_yt_title.txt")
+        print(f"  Run generate_caption.py first, or re-run post_pipeline.py.")
+        POST_LOG.parent.mkdir(parents=True, exist_ok=True)
+        with open(POST_LOG, "a") as log:
+            log.write(f"{datetime.now().isoformat()} | {stem} | youtube | SKIPPED no_yt_title\n")
+        sys.exit(1)
+
+    description = "#Shorts"  # plain — no demographic words
 
     print(f"\nClip    : {args.clip}")
     print(f"Video   : {video}")

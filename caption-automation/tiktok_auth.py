@@ -23,7 +23,7 @@ CONFIG       = Path.home() / "TellMeAJoke/config.json"
 REDIRECT_URI = "http://localhost:8080/"
 TOKEN_URL    = "https://open.tiktokapis.com/v2/oauth/token/"
 AUTH_URL     = "https://www.tiktok.com/v2/auth/authorize/"
-SCOPES       = "video.upload,video.publish"
+SCOPES       = "user.info.basic,video.upload,video.publish"
 
 def load_config() -> dict:
     with open(CONFIG) as f:

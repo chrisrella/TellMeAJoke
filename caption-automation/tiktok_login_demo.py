@@ -364,13 +364,13 @@ def main() -> None:
     server = HTTPServer(("localhost", 8080), DemoHandler)
     server.timeout = 1.0  # check done_event every second
 
-    url = "http://localhost:8080/"
+    login_page = "https://chrisrella.github.io/TellMeAJoke/tiktok-connect.html"
     print(f"\n{'─'*50}")
     print(f"  Tell Me A Joke — TikTok OAuth Demo")
     print(f"{'─'*50}")
-    print(f"  Opening: {url}")
+    print(f"  Opening: {login_page}")
     print(f"  Press Ctrl+C to stop.\n")
-    webbrowser.open(url)
+    webbrowser.open(login_page)
 
     # Serve until OAuth completes or Ctrl+C
     while not DemoHandler.done_event.is_set():

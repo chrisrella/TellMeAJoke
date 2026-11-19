@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tell Me A Joke — Connect with TikTok</title>
+<meta name="description" content="Connect your TikTok account to Tell Me A Joke to enable automated video posting.">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .card {
+    background: #1a1a1a;
+    border-radius: 24px;
+    padding: 60px 48px 48px;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  }
+
+  .logo-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .logo-emoji { font-size: 40px; }
+  .logo-name  { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+
+  .divider {
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, #69C9D0, #EE1D52);
+    border-radius: 2px;
+    margin: 0 auto 28px;
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #f5f5f5;
+  }
+
+  .subtitle {
+    color: #777;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 36px;
+  }
+
+  /* TikTok branded connect button */
+  .btn-tiktok {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #000;
+    color: #fff;
+    border: 2px solid #fff;
+    padding: 15px 32px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s, border-color 0.18s;
+    width: 100%;
+    max-width: 300px;
+  }
+  .btn-tiktok:hover {
+    background: #EE1D52;
+    border-color: #EE1D52;
+    color: #fff;
+  }
+
+  .tiktok-svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    flex-shrink: 0;
+  }
+
+  /* Permission scopes */
+  .permissions {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #2a2a2a;
+  }
+  .permissions-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #444;
+    margin-bottom: 12px;
+  }
+  .scope-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    text-align: left;
+    margin-bottom: 10px;
+  }
+  .scope-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .scope-text { font-size: 13px; color: #888; line-height: 1.4; }
+  .scope-name { color: #ccc; font-weight: 600; }
+
+  /* How it works */
+  .steps {
+    margin-top: 32px;
+    padding: 24px;
+    background: #111;
+    border-radius: 16px;
+    text-align: left;
+  }
+  .steps-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #444;
+    margin-bottom: 14px;
+  }
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.4;
+  }
+  .step:last-child { margin-bottom: 0; }
+  .step-num {
+    background: #2a2a2a;
+    color: #888;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  footer {
+    margin-top: 32px;
+    font-size: 11px;
+    color: #333;
+    text-align: center;
+  }
+  footer a { color: #444; text-decoration: none; }
+  footer a:hover { color: #666; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo-row">
+    <span class="logo-emoji">🎤</span>
+    <span class="logo-name">Tell Me A Joke</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <h1>Connect your TikTok account</h1>
+  <p class="subtitle">
+    Authorize Tell Me A Joke to post short comedy clips to your TikTok profile
+    using the official Content Posting API.
+  </p>
+
+  <!-- Connect button — JavaScript builds the OAuth URL with the correct client_key and PKCE -->
+  <a class="btn-tiktok" id="connect-btn" href="#" onclick="startOAuth(event)">
+    <svg class="tiktok-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5
+               2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01
+               a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34
+               6.34 6.34 0 006.33-6.34V8.69a8.11 8.11 0 004.74 1.52V6.76a4.84 4.84 0 01-1-.07z"/>
+    </svg>
+    Connect with TikTok
+  </a>
+
+  <!-- Permissions -->
+  <div class="permissions">
+    <div class="permissions-label">Permissions requested</div>
+
+    <div class="scope-row">
+      <span class="scope-icon">📤</span>
+      <div class="scope-text">
+        <span class="scope-name">video.upload</span> — Upload video files to TikTok's servers
+        before publishing.
+      </div>
+    </div>
+
+    <div class="scope-row">
+      <span class="scope-icon">🚀</span>
+      <div class="scope-text">
+        <span class="scope-name">video.publish</span> — Publish uploaded videos to your TikTok
+        profile as posts.
+      </div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="steps">
+    <div class="steps-title">How it works</div>
+    <div class="step">
+      <div class="step-num">1</div>
+      <span>Click <em>Connect with TikTok</em> above to open TikTok's authorization page.</span>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <span>Log in and approve the requested permissions.</span>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <span>TikTok redirects back and an access token is saved — ready to post.</span>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <span>Videos are uploaded and published via the Content Posting API (<code>video.upload</code> + <code>video.publish</code>).</span>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="https://www.tellmeajoke.com">tellmeajoke.com</a> &nbsp;·&nbsp;
+  <a href="https://github.com/chrisrella/TellMeAJoke">GitHub</a>
+</footer>
+
+<script>
+  // TikTok OAuth configuration
+  const CLIENT_KEY    = "awf14ynmpi5aumq8";
+  const REDIRECT_URI  = "http://localhost:8080/";
+  const SCOPES        = "user.info.basic,video.upload,video.publish";
+  const AUTH_BASE_URL = "https://www.tiktok.com/v2/auth/authorize/";
+
+  // Simple PKCE using Web Crypto (supported in all modern browsers)
+  async function generatePKCE() {
+    const array    = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    // Base64url-encode to get verifier (43 chars, matching server-side length)
+    const verifier = btoa(String.fromCharCode(...array))
+      .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "").slice(0, 43);
+
+    const enc       = new TextEncoder();
+    const hashBuf   = await crypto.subtle.digest("SHA-256", enc.encode(verifier));
+    const challenge = btoa(String.fromCharCode(...new Uint8Array(hashBuf)))
+      .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+
+    return { verifier, challenge };
+  }
+
+  async function startOAuth(e) {
+    e.preventDefault();
+    const btn = document.getElementById("connect-btn");
+    btn.textContent = "Redirecting…";
+    btn.style.opacity = "0.7";
+
+    const state          = [...crypto.getRandomValues(new Uint8Array(16))]
+      .map(b => b.toString(16).padStart(2,"0")).join("");
+    const { verifier, challenge } = await generatePKCE();
+
+    // Store verifier + state so the callback page can use them
+    sessionStorage.setItem("tt_verifier", verifier);
+    sessionStorage.setItem("tt_state",    state);
+
+    const params = new URLSearchParams({
+      client_key:            CLIENT_KEY,
+      response_type:         "code",
+      scope:                 SCOPES,
+      redirect_uri:          REDIRECT_URI,
+      state,
+      code_challenge:        challenge,
+      code_challenge_method: "S256",
+    });
+
+    window.location.href = AUTH_BASE_URL + "?" + params.toString();
+  }
+</script>
+
+</body>
+</html>

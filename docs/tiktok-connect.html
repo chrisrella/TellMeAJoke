@@ -184,7 +184,7 @@
   </p>
 
   <!-- Connect button — JavaScript builds the OAuth URL with the correct client_key and PKCE -->
-  <a class="btn-tiktok" id="connect-btn" href="#" onclick="startOAuth(event)">
+  <a class="btn-tiktok" id="connect-btn" href="http://localhost:8080/connect">
     <svg class="tiktok-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5
                2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01
@@ -251,54 +251,8 @@
 </footer>
 
 <script>
-  // TikTok OAuth configuration
-  const CLIENT_KEY    = "awf14ynmpi5aumq8";
-  const REDIRECT_URI  = "http://localhost:8080/";
-  const SCOPES        = "user.info.basic,video.upload,video.publish";
-  const AUTH_BASE_URL = "https://www.tiktok.com/v2/auth/authorize/";
-
-  // Simple PKCE using Web Crypto (supported in all modern browsers)
-  async function generatePKCE() {
-    const array    = new Uint8Array(32);
-    crypto.getRandomValues(array);
-    // Base64url-encode to get verifier (43 chars, matching server-side length)
-    const verifier = btoa(String.fromCharCode(...array))
-      .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "").slice(0, 43);
-
-    const enc       = new TextEncoder();
-    const hashBuf   = await crypto.subtle.digest("SHA-256", enc.encode(verifier));
-    const challenge = btoa(String.fromCharCode(...new Uint8Array(hashBuf)))
-      .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-
-    return { verifier, challenge };
-  }
-
-  async function startOAuth(e) {
-    e.preventDefault();
-    const btn = document.getElementById("connect-btn");
-    btn.textContent = "Redirecting…";
-    btn.style.opacity = "0.7";
-
-    const state          = [...crypto.getRandomValues(new Uint8Array(16))]
-      .map(b => b.toString(16).padStart(2,"0")).join("");
-    const { verifier, challenge } = await generatePKCE();
-
-    // Store verifier + state so the callback page can use them
-    sessionStorage.setItem("tt_verifier", verifier);
-    sessionStorage.setItem("tt_state",    state);
-
-    const params = new URLSearchParams({
-      client_key:            CLIENT_KEY,
-      response_type:         "code",
-      scope:                 SCOPES,
-      redirect_uri:          REDIRECT_URI,
-      state,
-      code_challenge:        challenge,
-      code_challenge_method: "S256",
-    });
-
-    window.location.href = AUTH_BASE_URL + "?" + params.toString();
-  }
+  // Button links directly to the local demo server's /connect endpoint,
+  // which handles PKCE generation and the full OAuth callback.
 </script>
 
 </body>

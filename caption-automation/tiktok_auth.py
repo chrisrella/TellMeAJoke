@@ -20,7 +20,7 @@ from urllib.parse import urlencode, urlparse, parse_qs
 import requests
 
 CONFIG       = Path.home() / "TellMeAJoke/config.json"
-REDIRECT_URI = "http://localhost:8080/"
+REDIRECT_URI = "http://127.0.0.1:8080/"
 TOKEN_URL    = "https://open.tiktokapis.com/v2/oauth/token/"
 AUTH_URL     = "https://www.tiktok.com/v2/auth/authorize/"
 SCOPES       = "user.info.basic,video.upload,video.publish"

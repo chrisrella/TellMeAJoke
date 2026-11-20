@@ -29,7 +29,7 @@ from urllib.parse import urlencode, urlparse, parse_qs
 import requests
 
 CONFIG        = Path.home() / "TellMeAJoke/config.json"
-REDIRECT_URI  = "http://localhost:8080/"
+REDIRECT_URI  = "http://127.0.0.1:8080/"
 TOKEN_URL     = "https://open.tiktokapis.com/v2/oauth/token/"
 AUTH_URL      = "https://www.tiktok.com/v2/auth/authorize/"
 SCOPES        = "user.info.basic,video.upload,video.publish"
@@ -125,6 +125,7 @@ LANDING_HTML = """<!DOCTYPE html>
   </a>
   <div class="scopes">
     Requesting permissions:<br>
+    <span class="scope-pill">user.info.basic</span>
     <span class="scope-pill">video.upload</span>
     <span class="scope-pill">video.publish</span>
   </div>
@@ -361,7 +362,7 @@ def main() -> None:
     DemoHandler.client_secret = client_secret
     DemoHandler.done_event    = threading.Event()
 
-    server = HTTPServer(("localhost", 8080), DemoHandler)
+    server = HTTPServer(("127.0.0.1", 8080), DemoHandler)
     server.timeout = 1.0  # check done_event every second
 
     login_page = "https://chrisrella.github.io/TellMeAJoke/tiktok-connect.html"
